@@ -3,7 +3,16 @@ const bcrypt = require('bcrypt');
 
 async function register(req, res) {
     try {
-        const { email, password, first_name, last_name } = req.body;
+        const {email, password, first_name, last_name} = req.body;
+        
+        if (!email || !password || !first_name || !last_name) {
+            return res.status(400).json({
+                error_code: 101,
+                error_title: "Parameter Error",
+                error_message: "Missing Parameters"
+            });
+        }
+        
         const passwordHash = await bcrypt.hash(password, 10);
 
         const [result] = await pool.query(
@@ -12,7 +21,6 @@ async function register(req, res) {
         );
 
         const userID = result[0][0].userID;
-
         if (userID == -1){
             return res.status(402).json({ 
                 error_code: 102,
@@ -30,20 +38,97 @@ async function register(req, res) {
 
     } catch (err) {
         console.error(err);
-        res.status(401).json({ 
-            error_code: 101, 
-            error_title: "Register Failure", 
-            error_message: 'Missing Paramaters' 
+        res.status(500).json({ 
+            error_code: 500, 
+            error_title: "Server Error", 
+            error_message: 'An unexpected error occurred' 
         });
     }
 }
 
 async function login(req, res) {
-    res.json({ status: 'ok' });
+    try {
+        const {email, password} = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({
+                error_code: 101,
+                error_title: "Parameter Error",
+                error_message: "Missing Parameters"
+            });
+        }
+
+        const [result] = await pool.query(
+            'CALL Login(?)',
+            [email]
+        );
+
+        if (!result[0][0]) {
+            return res.status(401).json({ 
+                error_code: 104,
+                error_title: "Login Failure",
+                error_message: 'Invalid credentials' 
+            });
+        }
+
+        const passwordHash = result[0][0].password;
+        const isPasswordValid = await bcrypt.compare(password, passwordHash);
+        if (!isPasswordValid) {
+            return res.status(401).json({ 
+                error_code: 103,
+                error_title: "Login Failure",
+                error_message: 'Invalid credentials' 
+            });
+        }
+
+        const userID = result[0][0].userID;
+        const first_name = result[0][0].first_name;
+        const last_name = result[0][0].last_name;
+
+        res.status(200).json({
+            user_id: userID,
+            email,
+            first_name,
+            last_name
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ 
+            error_code: 500, 
+            error_title: "Server Error", 
+            error_message: 'An unexpected error occurred' 
+        });
+    }
 }
 
 async function listAllUsers(req, res) {
-    res.json({ status: 'ok' });
+    try {
+        const {requested_user_id} = req.body;
+        
+        if (!requested_user_id) {
+        return res.status(400).json({
+            error_code: 101,
+            error_title: "Parameter Error",
+            error_message: "Missing Parameters"
+        });
+        }
+
+        const [result] = await pool.query(
+            'CALL ListAllUsers(?)',
+            [requested_user_id]
+        );
+
+        res.status(200).json(result[0]);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ 
+            error_code: 500, 
+            error_title: "Server Error", 
+            error_message: 'An unexpected error occurred' 
+        });
+    }
 }
 
 module.exports = {
