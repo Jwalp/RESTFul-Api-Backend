@@ -25,6 +25,21 @@ async function sendMessage(req, res) {
             [sender_user_id, reciever_user_id, message]
         );
 
+        const returnValue = result[0][0].result;
+        if (returnValue == -1){
+            return res.status(402).json({ 
+                error_code: 105,
+                error_title: "Invalid ID", 
+                error_message: 'Unknown sender or reciever ID' 
+            });
+        } else if (returnValue != 0) {
+            return res.status(402).json({ 
+                error_code: 106,
+                error_title: "Message Failure", 
+                error_message: 'Message sending failed' 
+            });
+        }
+
         res.status(201).json({ 
             success_code: 200, 
             success_title: "Message Sent", 
