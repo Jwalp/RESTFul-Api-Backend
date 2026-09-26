@@ -1,11 +1,73 @@
 const pool = require('../config/db');
 
 async function sendMessage(req, res) {
-   res.json({ status: 'ok' });
+   try {
+        const {sender_user_id, reciever_user_id, message} = req.body;
+        
+        if (!sender_user_id || !reciever_user_id || !message) {
+            return res.status(400).json({
+                error_code: 101,
+                error_title: "Parameter Error",
+                error_message: "Missing Parameters"
+            });
+        }
+        
+        if (message.length > 256) {
+            return res.status(400).json({
+                error_code: 104,
+                error_title: "Message Error",
+                error_message: "Message too long"
+            });
+        }
+
+        const [result] = await pool.query(
+            'CALL SendMessage(?, ?, ?)',
+            [sender_user_id, reciever_user_id, message]
+        );
+
+        res.status(201).json({ 
+            success_code: 200, 
+            success_title: "Message Sent", 
+            success_message: 'Message was sent successfully' 
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ 
+            error_code: 500, 
+            error_title: "Server Error", 
+            error_message: 'An unexpected error occurred' 
+        });
+    }
 }
 
 async function viewMessages(req, res) {
-    res.json({ status: 'ok' });
+    try {
+        const {user_id_a, user_id_b} = req.body;
+        
+        if (!user_id_a || !user_id_b) {
+        return res.status(400).json({
+            error_code: 101,
+            error_title: "Parameter Error",
+            error_message: "Missing Parameters"
+        });
+        }
+
+        const [result] = await pool.query(
+            'CALL ViewMessages(?, ?)',
+            [user_id_a, user_id_b]
+        );
+
+        res.status(200).json(result[0]);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ 
+            error_code: 500, 
+            error_title: "Server Error", 
+            error_message: 'An unexpected error occurred' 
+        });
+    }
 }
 
 
