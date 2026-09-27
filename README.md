@@ -5,22 +5,22 @@ Name: Jonathan Walpow
 Time to Complete: 4-5 Hours (Including needing to reinstall SQL)
 
 Steps to Start and Finish:
-    1: Plan Enviroment
-        -Create MySQL Tables
-        -Create starting javascript backend enviroment (Basic server.js + installed packages + .gitignore)
-        -Connect database to backend enviroment (.env, db.js, pool into server.js)
-        -Create required endpoint list, check basic connection with endpoints (server.js)
-        -Move endpoint functionality to respective controller files (accountController.js, messageController.js)
+    1: Plan Environment <br />
+        -Create MySQL Tables  <br />
+        -Create starting javascript backend enviroment (Basic server.js + installed packages + .gitignore)  <br />
+        -Connect database to backend enviroment (.env, db.js, pool into server.js)  <br />
+        -Create required endpoint list, check basic connection with endpoints (server.js)  <br />
+        -Move endpoint functionality to respective controller files (accountController.js, messageController.js)  <br />
     2: Work on endpoints one at a time
-        -Create register user endpoint + structure for other endpoints to follow
-        -Create stored procedure for register
-        -Validate with Bruno
-        -Add edge cases when needed
-        -Repeat with other endpoints, copy and improve structure when needed
+        -Create register user endpoint + structure for other endpoints to follow  <br />
+        -Create stored procedure for register  <br />
+        -Validate with Bruno  <br />
+        -Add edge cases when needed  <br />
+        -Repeat with other endpoints, copy and improve structure when needed  <br />
     3: Final Improvements
-        -Review data transfer in endpoints
-        -Find other edge cases when needed
-        -Add comments + readMe for code clarity
+        -Review data transfer in endpoints  <br />
+        -Find other edge cases when needed  <br />
+        -Add comments + readMe for code clarity  <br />
 
 Issues with Endpoint Structure:
 -No constraints listed -> had to design based on experience
