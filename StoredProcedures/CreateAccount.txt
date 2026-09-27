@@ -1,0 +1,20 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `CreateAccount`(
+    IN p_email VARCHAR(127),
+    IN p_password VARCHAR(127),
+    IN p_firstname VARCHAR(31),
+    IN p_lastname VARCHAR(31)
+)
+BEGIN
+	DECLARE dupEmail INT; 
+	SELECT COUNT(*) INTO dupEmail
+    from users
+    where email = p_email;
+    
+    IF dupEmail > 0 THEN
+		SELECT -1 AS user_id;
+	ELSE
+    INSERT INTO users (email, password, first_name, last_name)
+    VALUES (p_email, p_password, p_firstname, p_lastname);
+    SELECT LAST_INSERT_ID() AS user_id;
+    END IF;
+END

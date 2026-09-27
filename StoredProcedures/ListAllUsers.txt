@@ -1,0 +1,8 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ListAllUsers`(
+	IN p_userID VARCHAR(127)
+)
+BEGIN
+	SELECT userID as user_ID, email, first_name, last_name 
+    FROM users
+    WHERE userID != p_userID;
+END

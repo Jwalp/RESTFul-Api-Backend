@@ -4,6 +4,7 @@ async function sendMessage(req, res) {
    try {
         const {sender_user_id, reciever_user_id, message} = req.body;
         
+        //Missing Parameter Error
         if (!sender_user_id || !reciever_user_id || !message) {
             return res.status(400).json({
                 error_code: 101,
@@ -12,6 +13,7 @@ async function sendMessage(req, res) {
             });
         }
         
+        //Message Length Error
         if (message.length > 256) {
             return res.status(400).json({
                 error_code: 104,
@@ -20,12 +22,16 @@ async function sendMessage(req, res) {
             });
         }
 
+        //Call Stored Procedure to send message, returns int result
         const [result] = await pool.query(
             'CALL SendMessage(?, ?, ?)',
             [sender_user_id, reciever_user_id, message]
         );
 
+        //Handles Return values
         const returnValue = result[0][0].result;
+        //-1 indicates that the database didn't have both ids in the users table
+        //0 indicates success
         if (returnValue == -1){
             return res.status(402).json({ 
                 error_code: 105,
@@ -60,6 +66,7 @@ async function viewMessages(req, res) {
     try {
         const {user_id_a, user_id_b} = req.body;
         
+        //Missing Parameter Error
         if (!user_id_a || !user_id_b) {
         return res.status(400).json({
             error_code: 101,
@@ -68,11 +75,13 @@ async function viewMessages(req, res) {
         });
         }
 
+        //Call Stored Procedure, returns table of all messages between the two users
         const [result] = await pool.query(
             'CALL ViewMessages(?, ?)',
             [user_id_a, user_id_b]
         );
 
+        //Return the table of messages with success status
         res.status(200).json(result[0]);
 
     } catch (err) {

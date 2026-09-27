@@ -1,0 +1,19 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SendMessage`(
+	IN p_sID VARCHAR(127),
+    IN p_rID VARCHAR(127),
+    IN p_message VARCHAR(255)
+)
+BEGIN
+	DECLARE idExists INT; 
+	SELECT COUNT(*) INTO idExists
+    from users
+    where userID = p_sID OR userID = p_rid;
+    
+    IF idExists != 2 THEN
+		Select -1 as result;
+	ELSE
+	INSERT INTO messages (sender_userID, reciever_userID, message, eposh)
+    VALUES (p_sID, p_rID, p_message, UNIX_TIMESTAMP());
+		Select 0 as result;
+    END IF;
+END

@@ -1,0 +1,10 @@
+CREATE DEFINER=`root`@`localhost` PROCEDURE `ViewMessages`(
+	IN p_firID VARCHAR(127),
+    IN p_secID VARCHAR(127)
+)
+BEGIN
+	SELECT messageID as message_ID, sender_userID as sender_user_id, message, eposh
+    FROM messages
+    WHERE (sender_userID = p_firID AND reciever_userID = p_secID) OR (sender_userID = p_secID AND reciever_userID = p_firID)
+    ORDER BY eposh;
+END
