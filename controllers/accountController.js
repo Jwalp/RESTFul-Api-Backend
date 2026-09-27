@@ -74,7 +74,7 @@ async function login(req, res) {
         //User Doesn't Exist
         if (!result[0][0]) {
             return res.status(401).json({ 
-                error_code: 104,
+                error_code: 103,
                 error_title: "Login Failure",
                 error_message: 'Invalid credentials' 
             });
@@ -85,7 +85,7 @@ async function login(req, res) {
         const isPasswordValid = await bcrypt.compare(password, passwordHash);
         if (!isPasswordValid) {
             return res.status(401).json({ 
-                error_code: 103,
+                error_code: 104,
                 error_title: "Login Failure",
                 error_message: 'Invalid credentials' 
             });
@@ -127,6 +127,7 @@ async function listAllUsers(req, res) {
         }
 
         //Call Stored Procedure, returns table of all users besides caller
+        //Note: Stored Procedure doesn't check if the requesting userID exists
         const [result] = await pool.query(
             'CALL ListAllUsers(?)',
             [requested_user_id]
